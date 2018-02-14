@@ -1111,6 +1111,9 @@ var Select$1 = function (_React$Component) {
 					if (!this.state.inputValue && this.props.backspaceRemoves) {
 						event.preventDefault();
 						this.popValue();
+					} else if (!this.state.inputValue && this.props.backspaceEditsLast) {
+						event.preventDefault();
+						this.popValueAndEdit();
 					}
 					break;
 				case 9:
@@ -1334,6 +1337,17 @@ var Select$1 = function (_React$Component) {
 			if (!valueArray.length) return;
 			if (valueArray[valueArray.length - 1].clearableValue === false) return;
 			this.setValue(this.props.multi ? valueArray.slice(0, valueArray.length - 1) : null);
+		}
+	}, {
+		key: 'popValueAndEdit',
+		value: function popValueAndEdit() {
+			var valueArray = this.getValueArray(this.props.value);
+			if (!valueArray.length) return;
+			if (valueArray[valueArray.length - 1].clearableValue === false) return;
+			this.setValue(this.props.multi ? valueArray.slice(0, valueArray.length - 1) : null);
+			this.setState({
+				inputValue: this.handleInputValueChange(valueArray[valueArray.length - 1][this.props.labelKey])
+			});
 		}
 	}, {
 		key: 'removeValue',
@@ -1914,6 +1928,7 @@ Select$1.propTypes = {
 	autoFocus: PropTypes.bool, // autofocus the component on mount
 	autofocus: PropTypes.bool, // deprecated; use autoFocus instead
 	autosize: PropTypes.bool, // whether to enable autosizing or not
+	backspaceEditsLast: PropTypes.bool, // whether backspace starts editing last value
 	backspaceRemoves: PropTypes.bool, // whether backspace removes an item if there is no text input
 	backspaceToRemoveMessage: PropTypes.string, // message to use for screenreaders to press backspace to remove the current item - {label} is replaced with the item label
 	className: PropTypes.string, // className for the outer element
@@ -1987,6 +2002,7 @@ Select$1.propTypes = {
 Select$1.defaultProps = {
 	arrowRenderer: arrowRenderer,
 	autosize: true,
+	backspaceEditsLast: false,
 	backspaceRemoves: true,
 	backspaceToRemoveMessage: 'Press backspace to remove {label}',
 	clearable: true,
