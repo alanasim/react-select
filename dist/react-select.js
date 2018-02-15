@@ -1355,13 +1355,28 @@ var Select$1 = function (_React$Component) {
 			});
 		}
 	}, {
-		key: 'removeValue',
-		value: function removeValue(value) {
+		key: 'initiateEditValue',
+		value: function initiateEditValue(value) {
 			var _this4 = this;
 
 			var valueArray = this.getValueArray(this.props.value);
+			if (!valueArray.length) return;
+			if (value.clearableValue === false) return;
 			this.setValue(valueArray.filter(function (i) {
 				return i[_this4.props.valueKey] !== value[_this4.props.valueKey];
+			}));
+			this.setState({
+				inputValue: this.handleInputValueChange(value[this.props.labelKey])
+			});
+		}
+	}, {
+		key: 'removeValue',
+		value: function removeValue(value) {
+			var _this5 = this;
+
+			var valueArray = this.getValueArray(this.props.value);
+			this.setValue(valueArray.filter(function (i) {
+				return i[_this5.props.valueKey] !== value[_this5.props.valueKey];
 			}));
 			this.focus();
 		}
@@ -1522,7 +1537,7 @@ var Select$1 = function (_React$Component) {
 	}, {
 		key: 'renderValue',
 		value: function renderValue(valueArray, isOpen) {
-			var _this5 = this;
+			var _this6 = this;
 
 			var renderLabel = this.props.valueRenderer || this.getOptionLabel;
 			var ValueComponent = this.props.valueComponent;
@@ -1534,19 +1549,19 @@ var Select$1 = function (_React$Component) {
 					this.props.placeholder
 				) : null;
 			}
-			var onClick = this.props.onValueClick ? this.handleValueClick : null;
+			var onClick = this.props.clickEditsOption ? this.initiateEditValue : this.props.onValueClick ? this.handleValueClick : null;
 			if (this.props.multi) {
 				return valueArray.map(function (value, i) {
 					return React__default.createElement(
 						ValueComponent,
 						{
-							disabled: _this5.props.disabled || value.clearableValue === false,
-							id: _this5._instancePrefix + '-value-' + i,
-							instancePrefix: _this5._instancePrefix,
-							key: 'value-' + i + '-' + value[_this5.props.valueKey],
+							disabled: _this6.props.disabled || value.clearableValue === false,
+							id: _this6._instancePrefix + '-value-' + i,
+							instancePrefix: _this6._instancePrefix,
+							key: 'value-' + i + '-' + value[_this6.props.valueKey],
 							onClick: onClick,
-							onRemove: _this5.removeValue,
-							placeholder: _this5.props.placeholder,
+							onRemove: _this6.removeValue,
+							placeholder: _this6.props.placeholder,
 							value: value
 						},
 						renderLabel(value, i),
@@ -1577,7 +1592,7 @@ var Select$1 = function (_React$Component) {
 		key: 'renderInput',
 		value: function renderInput(valueArray, focusedOptionIndex) {
 			var _classNames,
-			    _this6 = this;
+			    _this7 = this;
 
 			var className = classNames('Select-input', this.props.inputProps.className);
 			var isOpen = this.state.isOpen;
@@ -1603,7 +1618,7 @@ var Select$1 = function (_React$Component) {
 				onChange: this.handleInputChange,
 				onFocus: this.handleInputFocus,
 				ref: function ref(_ref) {
-					return _this6.input = _ref;
+					return _this7.input = _ref;
 				},
 				role: 'combobox',
 				required: this.state.required,
@@ -1631,7 +1646,7 @@ var Select$1 = function (_React$Component) {
 					onBlur: this.handleInputBlur,
 					onFocus: this.handleInputFocus,
 					ref: function ref(_ref2) {
-						return _this6.input = _ref2;
+						return _this7.input = _ref2;
 					},
 					role: 'combobox',
 					style: { border: 0, width: 1, display: 'inline-block' },
@@ -1757,18 +1772,18 @@ var Select$1 = function (_React$Component) {
 	}, {
 		key: 'renderHiddenField',
 		value: function renderHiddenField(valueArray) {
-			var _this7 = this;
+			var _this8 = this;
 
 			if (!this.props.name) return;
 			if (this.props.joinValues) {
 				var value = valueArray.map(function (i) {
-					return stringifyValue(i[_this7.props.valueKey]);
+					return stringifyValue(i[_this8.props.valueKey]);
 				}).join(this.props.delimiter);
 				return React__default.createElement('input', {
 					disabled: this.props.disabled,
 					name: this.props.name,
 					ref: function ref(_ref3) {
-						return _this7.value = _ref3;
+						return _this8.value = _ref3;
 					},
 					type: 'hidden',
 					value: value
@@ -1776,12 +1791,12 @@ var Select$1 = function (_React$Component) {
 			}
 			return valueArray.map(function (item, index) {
 				return React__default.createElement('input', {
-					disabled: _this7.props.disabled,
+					disabled: _this8.props.disabled,
 					key: 'hidden.' + index,
-					name: _this7.props.name,
+					name: _this8.props.name,
 					ref: 'value' + index,
 					type: 'hidden',
-					value: stringifyValue(item[_this7.props.valueKey])
+					value: stringifyValue(item[_this8.props.valueKey])
 				});
 			});
 		}
@@ -1815,7 +1830,7 @@ var Select$1 = function (_React$Component) {
 	}, {
 		key: 'renderOuter',
 		value: function renderOuter(options, valueArray, focusedOption) {
-			var _this8 = this;
+			var _this9 = this;
 
 			var menu = this.renderMenu(options, valueArray, focusedOption);
 			if (!menu) {
@@ -1825,7 +1840,7 @@ var Select$1 = function (_React$Component) {
 			return React__default.createElement(
 				'div',
 				{ ref: function ref(_ref5) {
-						return _this8.menuContainer = _ref5;
+						return _this9.menuContainer = _ref5;
 					}, className: 'Select-menu-outer', style: this.props.menuContainerStyle },
 				React__default.createElement(
 					'div',
@@ -1835,7 +1850,7 @@ var Select$1 = function (_React$Component) {
 						onMouseDown: this.handleMouseDownOnMenu,
 						onScroll: this.handleMenuScroll,
 						ref: function ref(_ref4) {
-							return _this8.menu = _ref4;
+							return _this9.menu = _ref4;
 						},
 						role: 'listbox',
 						style: this.props.menuStyle,
@@ -1848,7 +1863,7 @@ var Select$1 = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this9 = this;
+			var _this10 = this;
 
 			var valueArray = this.getValueArray(this.props.value);
 			var options = this._visibleOptions = this.filterOptions(this.props.multi && this.props.removeSelected ? valueArray : null);
@@ -1888,7 +1903,7 @@ var Select$1 = function (_React$Component) {
 			return React__default.createElement(
 				'div',
 				{ ref: function ref(_ref7) {
-						return _this9.wrapper = _ref7;
+						return _this10.wrapper = _ref7;
 					},
 					className: className,
 					style: this.props.wrapperStyle },
@@ -1896,7 +1911,7 @@ var Select$1 = function (_React$Component) {
 				React__default.createElement(
 					'div',
 					{ ref: function ref(_ref6) {
-							return _this9.control = _ref6;
+							return _this10.control = _ref6;
 						},
 						className: 'Select-control',
 						onKeyDown: this.handleKeyDown,
@@ -1941,6 +1956,7 @@ Select$1.propTypes = {
 	clearRenderer: PropTypes.func, // create clearable x element
 	clearValueText: stringOrNode, // title for the "clear" control
 	clearable: PropTypes.bool, // should it be possible to reset value
+	clickEditsOption: PropTypes.bool,
 	closeOnSelect: PropTypes.bool, // whether to close the menu when a value is selected
 	deleteRemoves: PropTypes.bool, // whether delete removes an item if there is no text input
 	delimiter: PropTypes.string, // delimiter to use to join multiple values for the hidden field value
@@ -2014,6 +2030,7 @@ Select$1.defaultProps = {
 	clearAllText: 'Clear all',
 	clearRenderer: clearRenderer,
 	clearValueText: 'Clear value',
+	clickEditsOption: false,
 	closeOnSelect: true,
 	deleteRemoves: true,
 	delimiter: ',',
