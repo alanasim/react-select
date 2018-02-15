@@ -675,6 +675,16 @@ class Select extends React.Component {
 		});
 	}
 
+	initiateEditValue (value) {
+		var valueArray = this.getValueArray(this.props.value);
+		if (!valueArray.length) return;
+		if (value.clearableValue === false) return;
+		this.setValue(valueArray.filter(i => i[this.props.valueKey] !== value[this.props.valueKey]));
+		this.setState({
+			inputValue: this.handleInputValueChange(value[this.props.labelKey])
+		});
+	}
+
 	removeValue (value) {
 		let valueArray = this.getValueArray(this.props.value);
 		this.setValue(valueArray.filter(i => i[this.props.valueKey] !== value[this.props.valueKey]));
@@ -827,7 +837,8 @@ class Select extends React.Component {
 			const showPlaceholder = shouldShowPlaceholder(this.state, this.props, isOpen);
 			return showPlaceholder ? <div className="Select-placeholder">{this.props.placeholder}</div> : null;
 		}
-		let onClick = this.props.onValueClick ? this.handleValueClick : null;
+		let onClick = this.props.clickEditsOption ? this.initiateEditValue : 
+			this.props.onValueClick ? this.handleValueClick : null;
 		if (this.props.multi) {
 			return valueArray.map((value, i) => {
 				return (
@@ -1218,6 +1229,7 @@ Select.propTypes = {
 	clearRenderer: PropTypes.func,        // create clearable x element
 	clearValueText: stringOrNode,         // title for the "clear" control
 	clearable: PropTypes.bool,            // should it be possible to reset value
+	clickEditsOption: PropTypes.bool,
 	closeOnSelect: PropTypes.bool,        // whether to close the menu when a value is selected
 	deleteRemoves: PropTypes.bool,        // whether delete removes an item if there is no text input
 	delimiter: PropTypes.string,          // delimiter to use to join multiple values for the hidden field value
@@ -1291,6 +1303,7 @@ Select.defaultProps = {
 	clearAllText: 'Clear all',
 	clearRenderer: defaultClearRenderer,
 	clearValueText: 'Clear value',
+	clickEditsOption: false,
 	closeOnSelect: true,
 	deleteRemoves: true,
 	delimiter: ',',
